@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cn.hnust.dao.IDataDao">
+	<!-- 查找是否已经存在用户标记 -->
+	<select id="queryUserLoginMark" parameterType="java.lang.String"
+		resultType="java.lang.String">
+		SELECT
+			loginflog
+		FROM
+			aboutuser
+		WHERE
+			account = #{value}
+	</select>
+
+
+	<!-- 生成用户登录标记和密钥 -->
+	<select id="insertMiWen" parameterType="java.util.Map">
+		INSERT INTO aboutuser
+		VALUES
+		(
+			#{account},
+			#{loginflog},
+			#{miyao}
+		)
+	</select>
+	<!-- 查询学生选修课程 -->
+	<select id="queryStudentCourses" parameterType="java.lang.String" resultType="com.cn.hnust.pojo.CourseInfo">
+		SELECT
+			C.*
+		FROM
+			aboutuser A
+		LEFT JOIN student_course_list SC ON A.account = SC.account
+		LEFT JOIN student_course C ON SC.courseId = C.courseId
+		WHERE
+			A.loginflog = #{value}
+	</select>
+	<!-- 查询用户的登录标志 -->
+	<select id="queryUserLoginFlog" parameterType="java.lang.String" resultType="int">
+		SELECT
+			COUNT(*)
+		FROM
+			aboutuser
+		WHERE
+			loginflog = #{value}
+	</select>
+	<!-- 查找用户的账号和密码用于爬虫 -->
+	<select id="queryPanChongXinXin" parameterType="java.lang.String" resultType="map">
+		SELECT
+			UI.account,
+			UI.password
+		FROM
+			aboutuser A
+		LEFT JOIN user_info UI ON A.account = UI.account
+		WHERE
+			loginflog = #{value}
+	</select>
+	
+	<!-- 查询学生考表 -->
+	<select id="queryStudentTest" parameterType="java.lang.String" resultType="com.cn.hnust.pojo.KaoBiao">
+		SELECT
+			T.district,
+			T.building,
+			T.classroom,
+			T.courseName,
+			T.week,
+			T.day,
+			T.time,
+			T.seat
+		FROM
+			aboutuser A
+		LEFT JOIN student_test_list ST ON A.account = ST.account
+		LEFT JOIN student_test T ON ST.testId = T.testId
+		WHERE
+			A.loginflog = #{value}
+	</select>
+	<!-- 查询用户成绩的分类 -->
+	<select id="queryUserGradeType" parameterType="java.lang.String" resultType="java.lang.String">
+		 SELECT DISTINCT
+			SG.description
+		FROM
+			aboutuser A
+		LEFT JOIN student_grade SG ON A.account = SG.account
+		WHERE
+			A.loginflog = #{value}
+	</select>
+	<!-- 查询学生成绩表 -->
+	<select id="queryStudentGrade" parameterType="java.lang.String" resultType="com.cn.hnust.pojo.Score">
+		SELECT
+			SG.courseName,
+			SG.credit,
+			SG.type,
+			SG.grade,
+			SG.notPassedCause,
+			SG.description name
+		FROM
+			aboutuser A
+		LEFT JOIN student_grade SG ON A.account = SG.account
+		WHERE
+			A.loginflog = #{value} 
+	</select>
+	<!-- 获取插件列表 -->
+	<select id="getChaJianList" resultType="com.cn.hnust.pojo.ChaJian">
+		SELECT
+			apkName,
+			apkVersion,
+			pictureName,
+			href,
+			cjtype
+		FROM
+			manage_apk
+		WHERE
+			deleteFlag = 0
+	</select>
+	<!--  
+	<select id="getOpenDate" resultType="java.lang.String">
+		SELECT
+			DATE_ADD(startTime, INTERVAL - 1 MONTH) date
+		FROM
+			course_time
+	</select>
+	-->
+	<select id="getOpenDate" resultType="java.lang.String">
+		SELECT
+			startTime date
+		FROM
+			course_time
+	</select>
+	<!-- 获取登录时的一次密钥 -->
+	<select id="getMiYao" parameterType="java.lang.String" resultType="java.lang.String">
+	SELECT
+		miyao
+	FROM
+		aboutuser
+	WHERE
+		loginflog = #{value}
+	</select>
+</mapper>

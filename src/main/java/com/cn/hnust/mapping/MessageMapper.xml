@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cn.hnust.dao.IMessageDao" >
+  <!-- 查询消息 -->
+  <select id="queryUserMessage" parameterType="java.lang.String" resultType="com.cn.hnust.pojo.Message">
+		SELECT
+			M.title,
+			M.content,
+			M.jiBie,
+			U.username sender
+		FROM
+			message_table M
+		LEFT JOIN user_info U ON M.account = U.account
+		ORDER BY
+			M.sendTime DESC
+		LIMIT 0,10
+  </select>
+  <!-- 插入消息 -->
+   <select id="insertUserMessage" parameterType="java.util.Map">
+		INSERT INTO message_table (
+			account,
+			content,
+			jiBie,
+			title,
+			sendTime
+		) SELECT
+			account,
+			#{content},
+			#{jiBie},
+			#{title},
+			NOW()
+		FROM
+			aboutuser
+		WHERE
+			loginflog = #{i}
+  </select>
+	
+</mapper>

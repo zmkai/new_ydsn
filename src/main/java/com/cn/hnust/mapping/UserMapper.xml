@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cn.hnust.dao.IUserDao" >
+  
+  <select id="queryUserinfo" parameterType="java.lang.String" resultType="com.cn.hnust.pojo.User">
+  	SELECT
+		U.role,
+		U.username,
+		U.sex,
+		U.college,
+		U.major,
+		U.clazz,
+		U.nianji,
+		A.loginflog i,
+		A.miyao k
+	FROM
+		user_info U
+	LEFT JOIN aboutuser A ON U.account = A.account
+	WHERE
+		U.account = #{account}
+  </select>
+  
+  <insert id="insertUserReflect" parameterType="java.util.Map">
+	  INSERT INTO user_reflect (
+		account,
+		content,
+		email,
+		device,
+		sendTime
+	) SELECT
+		A.account,
+		#{content},
+		#{email},
+		#{device},
+		NOW()
+	FROM
+		aboutuser A
+	WHERE
+		A.loginflog = #{i}
+  </insert>
+  <!-- 查看用户是否更改密码 -->
+    <select id="queryUserByPassword" parameterType="java.lang.String" resultType="java.lang.String">
+	  	SELECT
+			password
+		FROM
+			user_info
+		WHERE
+			account = #{value}
+  </select>
+  
+  <!-- 更新用户的密码 -->
+  <update id="updataUserPassword" parameterType="java.util.Map">
+  		UPDATE user_info
+		SET PASSWORD = #{password}
+		WHERE
+			account = #{account}
+  </update>
+	
+</mapper>
